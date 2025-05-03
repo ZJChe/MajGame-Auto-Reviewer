@@ -155,25 +155,29 @@ def get_tenhou_pt(name: str) -> str:
             recentrank += str(rank)
             
 
-        ans = (name+": "+levelmap[currank]['name']+"["+str(currpt)+"/"+str(levelmap[currank]['maxscore'])+"]")
+        res = name+": "+levelmap[currank]['name']+"["+str(currpt)+"/"
+        if currank == 20:
+            res =  res +"2200]"
+        else:
+            res =  res +str(levelmap[currank]['maxscore'])+"]"
         # if (currank == maxrank and currpt == maxpt):
-        #     ans = ans + "★"
-        # ans = ans + ("\n历史最高: "+levelmap[maxrank]['name']+" "+str(maxpt)+"pt")
+        #     res = res + "★"
+        # res = res + ("\n历史最高: "+levelmap[maxrank]['name']+" "+str(maxpt)+"pt")
 
         if ("rate" in res and "4" in res["rate"]):
-            ans = ans+(" R"+str(res["rate"]["4"]))
+            res = res+(" R"+str(res["rate"]["4"]))
 
         # tarrank = str(urlrank).replace("***",name)
         # r1 = requests.get(tarrank)
         # res1 = json.loads(r1.text)
         # if "4" in res1:
-        #     ans = ans+"\n段位排名: "+str(res1['4']['graderank'])+" 名"
+        #     res = res+"\n段位排名: "+str(res1['4']['graderank'])+" 名"
 
-        # ans = ans + "\n                --------->最新"
-        ans = ans + "\n最近战绩: ["+recentrank[::-1]+"]\n"  
-        ans = ans + "最近对战: " + recentbattle +"\n"
+        # res = res + "\n                --------->最新"
+        res = res + "\n最近战绩: ["+recentrank[::-1]+"]\n"  
+        res = res + "最近对战: " + recentbattle +"\n"
 
-        return ans
+        return res
     except requests.exceptions.Timeout:
         return "请求超时，请稍后再试"
     except Exception as e:
