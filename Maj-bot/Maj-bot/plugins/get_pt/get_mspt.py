@@ -23,13 +23,12 @@ def get_level_text(username: str, level: dict) -> str:
     if level["id"] < 10700:
         # 不是魂天
         rk = MAJSOUL_RANKS[str(level["id"])]
-        return f"{username}: {rk[0]}[{level["score"]+level["delta"]}/{rk[1]}]"
+        return f"{username}: {rk[0]}[{level['score'] + level['delta']}/{rk[1]}]"
     else:
         # 是魂天
         level_id = level["id"] - 10700
         if level_id < len(LEVEL_MAX_POINTS):
-            return f"{username}: 魂天{level_id}[{(level["score"]+level["delta"])/100:.1f}/{20.0}]"
-
+            return f"{username}: 魂天{level_id}[{(level['score'] + level['delta']) / 100:.1f}/{20.0}]"
 
 
 def get_majsoul_pt(username: str, max_users = 3) -> str:
