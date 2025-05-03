@@ -15,7 +15,7 @@ def get_weather(city_name, api_key="b5ccb8f5b307bc3a7c20c371da871062", lang="zh_
     }
     
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=5)
         response.raise_for_status()
         data = response.json()
         
@@ -28,9 +28,10 @@ def get_weather(city_name, api_key="b5ccb8f5b307bc3a7c20c371da871062", lang="zh_
         return (f"{city_name} 当前天气：{weather_desc}，温度：{temp}℃，"
                 f"体感温度：{feels_like}℃，湿度：{humidity}% ，"
                 f"风速：{wind_speed} m/s")
-        
+    except requests.exceptions.Timeout:
+        return "请求超时，请稍后再试"
     except requests.exceptions.HTTPError as e:
-        return f"请求失败"
+        return f"无法获取天气信息，请检查城市名称是否正确。"
     except KeyError:
         return "无法获取天气信息，请检查城市名称是否正确。"
 
