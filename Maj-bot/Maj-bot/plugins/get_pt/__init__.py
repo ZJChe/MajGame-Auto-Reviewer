@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 
 from .get_mspt import get_majsoul_pt
 
-mspt = startswith(("mspt"), ignore_case=True)
+mspt = on_message(rule=startswith("mspt"), priority=10)
 
 @mspt.handle()
 async def handle_function(args: Message = CommandArg()):
