@@ -1,0 +1,15 @@
+[project]
+requires-python = ">=3.10,<4.0"
+
+dynamic = ["version"]
+name = "Maj-bot"
+description = "maj bot. Based on nonebot2."
+readme = "README.md"
+
+[tool.nonebot]
+adapters = [
+    { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
+]
+plugins = []
+plugin_dirs = ["/Maj-bot/Maj-bot/plugins"]
+builtin_plugins = ["echo"]
