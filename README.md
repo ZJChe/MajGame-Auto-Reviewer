@@ -11,5 +11,5 @@ xvfb-run -a qq --no-sandbox
 ### nonebot
 
 ```bash
-python nonebot/Maj-bot/bot.py
+python bot.py
 ```
