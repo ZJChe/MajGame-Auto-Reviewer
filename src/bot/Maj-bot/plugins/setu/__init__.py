@@ -30,9 +30,9 @@ print(is_url("example.com"))          # False（没有scheme）
 @setu.handle()
 async def handle_setu(foo: Annotated[ParserExit, ShellCommandArgs()]):
     if foo.status == 0:
-        setu.finish(foo.message)  # help message
+        await setu.finish(foo.message)  # help message
     else:
-        setu.finish(foo.message)  # error message
+        await setu.finish(foo.message)  # error message
 
 @setu.handle()
 async def handle_setu(foo: Annotated[Namespace, ShellCommandArgs()]):
@@ -40,8 +40,13 @@ async def handle_setu(foo: Annotated[Namespace, ShellCommandArgs()]):
     r18 = arg_dict.get("r18")
     tag = arg_dict.get("tag")
     url = get_setu_lilicon(False, tag)
-    if is_url(url):
-        await setu.finish(Message(f'[CQ:image,file={url}]'))
-    else:
+    try:
+        if is_url(url):
+            await setu.finish(Message(f'[CQ:image,file={url}]'))
+        else:
+            await setu.finish(url)
+    except Exception as e:
+        logger.error(f"发生错误: {e}, url: {url}")
+        await setu.send("发生错误,请检查API是否正常.")
         await setu.finish(url)
         
