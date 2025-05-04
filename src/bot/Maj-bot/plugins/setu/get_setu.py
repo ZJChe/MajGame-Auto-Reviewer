@@ -21,9 +21,9 @@ def get_setu_lilicon(r18: bool = False, tag: str = None) -> str:
     except requests.RequestException as e:
         return f"请求失败: {e}"
     except ValueError:
-        return "解析响应失败，请检查API是否正常。"
+        return "解析响应失败,请检查API是否正常."
     except KeyError:
-        return "响应格式错误，请检查API是否正常。"
+        return "响应格式错误,请检查API是否正常."
     except Exception as e:
         return f"发生错误: {e}"
 

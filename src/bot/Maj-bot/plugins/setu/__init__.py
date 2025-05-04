@@ -1,4 +1,5 @@
 from typing import Annotated
+from urllib.parse import urlparse
 
 from nonebot import on_command, on_message, on_shell_command
 from nonebot.rule import to_me, startswith, shell_command, ArgumentParser, Namespace
@@ -15,6 +16,17 @@ parser.add_argument("-t", "--tag", default=None)
 
 setu = on_shell_command("setu", aliases={"色图"}, priority=10, block=True, parser=parser)
 
+def is_url(string):
+    try:
+        result = urlparse(string)
+        return all([result.scheme in ['http', 'https', 'ftp'], result.netloc])
+    except ValueError:
+        return False
+
+print(is_url("https://example.com"))  # True
+print(is_url("example.com"))          # False（没有scheme）
+
+
 @setu.handle()
 async def handle_setu(foo: Annotated[ParserExit, ShellCommandArgs()]):
     if foo.status == 0:
@@ -28,5 +40,8 @@ async def handle_setu(foo: Annotated[Namespace, ShellCommandArgs()]):
     r18 = arg_dict.get("r18")
     tag = arg_dict.get("tag")
     url = get_setu_lilicon(False, tag)
-    await setu.finish(Message(f'[CQ:image,file={url}]'))
-    
+    if is_url(url):
+        await setu.finish(Message(f'[CQ:image,file={url}]'))
+    else:
+        await setu.finish(url)
+        
