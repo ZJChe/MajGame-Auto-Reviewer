@@ -22,3 +22,4 @@ async def handle_function(bot: Bot, event: Event):
     nickname = message[4:].strip()
     pt_result = get_tenhou_pt(nickname)
     await mspt.finish(f"{pt_result}")
+    

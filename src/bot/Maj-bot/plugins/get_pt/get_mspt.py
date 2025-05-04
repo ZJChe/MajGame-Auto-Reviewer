@@ -37,6 +37,8 @@ def get_majsoul_pt(username: str, max_users = 3) -> str:
     :param username: 雀魂用户名
     :return: PT值
     """
+    if username == '':
+        return "请指定查询玩家"
     get_id = f"https://5-data.amae-koromo.com/api/v2/pl4/search_player/{username}?limit={max_users}&tag=all"
     get_info = "https://5-data.amae-koromo.com/api/v2/pl4/player_stats/{}/1262304000000/1746278399999?mode=16&tag=485077"
     try:
@@ -56,7 +58,10 @@ def get_majsoul_pt(username: str, max_users = 3) -> str:
             if satisfactory_user > 1:
                 result_text += "\n"
 
-        return result_text
+        if result_text == "":
+            return f"没有找到玩家 {username} "
+        else:
+            return result_text
 
     except requests.exceptions.Timeout:
         return "请求超时，请稍后再试"
