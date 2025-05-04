@@ -18,7 +18,7 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
     arg_dict = vars(foo)
     match = arg_dict.get("match")
     team = arg_dict.get("team")
-    await mres.finish(f"{match if match else "0"} {team if team else "1"} {event.get_session_id()}")
+    await mres.finish(f"{match if match else 0} {team if team else 1} {event.get_session_id()}")
     # if match or team:
     #     pass
     # else:
