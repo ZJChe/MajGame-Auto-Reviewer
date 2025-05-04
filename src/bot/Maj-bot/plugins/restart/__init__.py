@@ -6,7 +6,7 @@ import asyncio
 
 import subprocess
 
-restart = on_command("re", rule=to_me(), priority=10, block=True)
+restart = on_command("restart", priority=10, block=True)
 
 admins = ['1548999469', '3263919697']
 
