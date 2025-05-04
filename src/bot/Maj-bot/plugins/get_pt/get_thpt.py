@@ -54,6 +54,8 @@ ptchange = {
 
 
 def get_tenhou_pt(name: str) -> str:
+    if name == '':
+        return "请指定查询玩家"
     try:
         targetPLevel = -1
         targetPLength = -1
@@ -63,13 +65,13 @@ def get_tenhou_pt(name: str) -> str:
         position = [0,0,0,0]
         tar = url+urllib.parse.quote(str(name))
         r = requests.get(tar)
-        res = json.loads(r.text)
-        if(res == False):
+        get_res = json.loads(r.text)
+        if(get_res == False):
             return "没有找到该玩家"
         lasttime = thistime =  0
 
 
-        for i in res['list']:
+        for i in get_res['list']:
             if lasttime == 0:
                 lasttime = thistime = int(i['starttime'])
             else:
@@ -130,12 +132,12 @@ def get_tenhou_pt(name: str) -> str:
 
         recentrank = ""
         recentbattle = ""
-        recordlen = len(res['list'])
+        recordlen = len(get_res['list'])
         count = -1
         while(len(recentrank)<10):
             if(count + recordlen < 0):
                 break
-            i = res['list'][count]
+            i = get_res['list'][count]
             count = count - 1
             if(not((i['sctype'] == "b" or i['sctype'] == "c") and i['playernum'] == 4)):
                 continue
@@ -164,8 +166,8 @@ def get_tenhou_pt(name: str) -> str:
         #     res = res + "★"
         # res = res + ("\n历史最高: "+levelmap[maxrank]['name']+" "+str(maxpt)+"pt")
 
-        if ("rate" in res and "4" in res["rate"]):
-            res = res+(" R"+str(res["rate"]["4"]))
+        if ("rate" in get_res and "4" in get_res["rate"]):
+            res = res+(" R"+str(get_res["rate"]["4"]))
 
         # tarrank = str(urlrank).replace("***",name)
         # r1 = requests.get(tarrank)
