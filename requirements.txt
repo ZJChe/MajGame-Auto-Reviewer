@@ -1,6 +1,7 @@
 annotated-types==0.7.0
 anyio==4.9.0
 argcomplete==3.6.2
+beautifulsoup4==4.13.4
 certifi==2025.4.26
 charset-normalizer==3.4.2
 click==8.1.8
@@ -10,12 +11,14 @@ Flask==3.1.0
 h11==0.16.0
 httptools==0.6.4
 idna==3.10
+imgkit==1.2.3
 loguru==0.7.3
 msgpack==1.1.0
 multidict==6.4.3
 nonebot-adapter-onebot==2.4.6
 nonebot2==2.4.2
 packaging==25.0
+pillow==11.2.1
 pipx==1.7.1
 platformdirs==4.3.7
 propcache==0.3.1
