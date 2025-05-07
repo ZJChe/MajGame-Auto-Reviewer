@@ -58,13 +58,13 @@ def get_maj_match_res(group_id: str, match_id : str = None, team_name : str = No
         with open('config.json', 'r', encoding='utf-8') as f:
             cfg = json.load(f)
         if group_id not in cfg:
-            return "该群组没有配置过观赛对象, 请联系管理员设置"
+            raise Exception("该群组没有配置过观赛对象, 请联系管理员设置")
         match_id = cfg[group_id]["match_id"]
         team_name = cfg[group_id]["team_name"]
     
     response = requests.get(url_rank+match_id, timeout=5)
     if response.status_code != 200:
-        return f"查询的比赛代码{match_id}可能不存在"
+        raise Exception(f"查询的比赛代码{match_id}可能不存在")
     # 假设 response 是你之前 requests.get() 得到的 Response
     html_page = response.content.decode('utf-8')  # bytes -> str
     soup = BeautifulSoup(html_page, 'html.parser')
@@ -81,9 +81,9 @@ def get_maj_match_res(group_id: str, match_id : str = None, team_name : str = No
                     groups.append((p_html, tbl))
     
     if (len(groups) < 1):
-        return f"关注的队伍{team_name}不在比赛中"
+        raise Exception(f"关注的队伍{team_name}不在比赛中")
     elif (len(groups) > 1):
-        return f"查询到多个{team_name}队伍在比赛中, 请检查队伍名称是否设置准确"
+        raise Exception(f"查询到多个{team_name}队伍在比赛中, 请检查队伍名称是否设置准确")
 
     # 3. imgkit 配置
     options = {
@@ -168,7 +168,7 @@ def get_maj_match_res(group_id: str, match_id : str = None, team_name : str = No
         os.remove(out_path)
         buffered = BytesIO()
         img.save(buffered, format="PNG")
-        return  base64.b64encode(buffered.getvalue()).decode('utf-8')
+        return "base64://" + base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 if __name__ == "__main__":
     print(get_maj_match_res("", "200", "上海交通大学"))

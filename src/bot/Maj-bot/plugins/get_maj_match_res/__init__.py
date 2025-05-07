@@ -29,5 +29,8 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
             set_cfg(match=match, team=team, group_id=group_id) 
             await mres.finish(f"已在群组[{group_id}]中设置关注比赛id[{match}]队伍[{team}]") 
     else:
-        res = get_maj_match_res(group_id=group_id)
+        try:
+            res = get_maj_match_res(group_id=group_id)
+        except Exception as e:
+            await mres.finish(f"{e}")
         await mres.finish(Message(f'[CQ:image,file={res}]'))
