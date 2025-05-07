@@ -20,7 +20,7 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
     arg_dict = vars(foo)
     match = arg_dict.get("match")
     team = arg_dict.get("team")
-    await mres.finish(f"{match if match else 0} {team if team else 1} {event.get_session_id()}")
+
     group_id = event.get_session_id().split("_")[1].strip()
     if match or team:
         if event.get_user_id() not in admins:
