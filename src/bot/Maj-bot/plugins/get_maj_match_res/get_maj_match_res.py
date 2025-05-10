@@ -140,7 +140,7 @@ def get_maj_match_res_detail(match_id : str, team_name : str)->str:
     # Build Table:
     table = [
         [
-            {'text': meta['c_name'] + f'第{round['round']}轮 第{round['t_class']}组 {round['clsmark']}', 'bg':(220,233,249),
+            {'text': meta['c_name'] + f"第{round['round']}轮 第{round['t_class']}组 {round['clsmark']}", 'bg':(220,233,249),
             'text_color':(0,0,0),'font_size':32, 'colspan':13}
         ],
         [
@@ -391,4 +391,4 @@ def get_maj_match_res(match_id : str = None, team_name : str = None)-> str:
         return "[CQ:image,file=base64://" + base64.b64encode(buffered.getvalue()).decode('utf-8') + "]"
 
 if __name__ == "__main__":
-    print(get_maj_match_res_detail("", "200", "上海交通大学"))
+    print(get_maj_match_res_detail("200", "上海交通大学"))
