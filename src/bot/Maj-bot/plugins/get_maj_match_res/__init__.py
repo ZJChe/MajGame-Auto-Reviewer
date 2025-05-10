@@ -1,3 +1,5 @@
+import os
+import json
 from typing import Annotated
 
 from nonebot import on_command, on_message, on_shell_command
@@ -5,7 +7,7 @@ from nonebot.rule import to_me, startswith, shell_command, ArgumentParser, Names
 from nonebot.params import CommandArg, ShellCommandArgs
 from nonebot.adapters.onebot.v11 import Event, Bot, Message
 
-from .get_maj_match_res import get_maj_match_res, set_cfg
+from .get_maj_match_res import get_maj_match_res, get_maj_match_res_detail, set_cfg
 
 parser = ArgumentParser()
 parser.add_argument("-m", "--match", default=None)
@@ -26,11 +28,22 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
         if event.get_user_id() not in admins:
             await mres.finish("你没有权限修改观赛配置, 请联系管理员")
         else:
-            set_cfg(match=match, team=team, group_id=group_id) 
+            match, team = set_cfg(match=match, team=team, group_id=group_id) 
             await mres.finish(f"已在群组[{group_id}]中设置关注比赛id[{match}]队伍[{team}]") 
     else:
         try:
-            res = get_maj_match_res(group_id=group_id)
+            if not os.path.exists('config.json'):
+                with open('config.json', 'w', encoding='utf-8') as f:
+                    json.dump({}, f, ensure_ascii=False, indent=4)
+            with open('config.json', 'r', encoding='utf-8') as f:
+                cfg = json.load(f)
+            if group_id not in cfg:
+                raise Exception("该群组没有配置过观赛对象, 请联系管理员设置")
+            match_id = cfg[group_id]["match_id"]
+            team_name = cfg[group_id]["team_name"]
+
+            res1 = get_maj_match_res_detail(match_id=match_id, team_name=team_name)
+            res2 = get_maj_match_res(match_id=match_id, team_name=team_name)
         except Exception as e:
             await mres.finish(f"{e}")
-        await mres.finish(Message(f'[CQ:image,file={res}]'))
+        await mres.finish(Message(f'{res1}{res2}'))
