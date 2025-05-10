@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import Event, Bot, Message
 
 from .get_maj_match_res import get_maj_match_res, get_maj_match_res_detail, set_cfg
 
-parser = ArgumentParser()
+parser = ArgumentParser(add_help=False)
 parser.add_argument("-m", "--match", default=None)
 parser.add_argument("-t", "--team", default=None)
 parser.add_argument("-h", "--help", action='store_true', default=False)
