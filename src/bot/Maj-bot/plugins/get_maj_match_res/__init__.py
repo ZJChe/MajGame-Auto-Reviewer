@@ -24,6 +24,7 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
     match = arg_dict.get("match")
     team = arg_dict.get("team")
     help = arg_dict.get("help")
+    print(help)
 
     group_id = event.get_session_id().split("_")[1].strip()
     if match or team:
