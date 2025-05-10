@@ -12,6 +12,7 @@ from .get_maj_match_res import get_maj_match_res, get_maj_match_res_detail, set_
 parser = ArgumentParser()
 parser.add_argument("-m", "--match", default=None)
 parser.add_argument("-t", "--team", default=None)
+parser.add_argument("-h", "--help", action='store_true', default=False)
 
 mres = on_shell_command("mres", priority=10, block= True, parser=parser)
 
@@ -22,6 +23,7 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
     arg_dict = vars(foo)
     match = arg_dict.get("match")
     team = arg_dict.get("team")
+    help = arg_dict.get("help")
 
     group_id = event.get_session_id().split("_")[1].strip()
     if match or team:
@@ -30,6 +32,13 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
         else:
             match, team = set_cfg(match=match, team=team, group_id=group_id) 
             await mres.finish(f"已在群组[{group_id}]中设置关注比赛id[{match}]队伍[{team}]") 
+    elif help:
+        await mres.finish("Usage: /mres [OPTIONS]\n\n" \
+        "Description:\n\t查询某场比赛的最新详细结果并按队伍筛选。\n\n" \
+        "Options:\n"\
+        "\t-m, --match <MATCH_ID>   指定比赛编号(整数)，例如 200\n"\
+        "\t-t, --team  <TEAM_NAME>  指定队伍名称(字符串)，例如 “上海交通大学”\n"\
+        "\t-h, --help               显示本帮助信息") 
     else:
         try:
             if not os.path.exists('config.json'):

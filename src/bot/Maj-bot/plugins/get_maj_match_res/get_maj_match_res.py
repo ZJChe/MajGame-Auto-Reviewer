@@ -206,7 +206,7 @@ def get_maj_match_res_detail(match_id : str, team_name : str)->str:
             text_w = bbox[2] - bbox[0]
             if text_w > max_text_w[col_idx]:
                 max_text_w[col_idx] = text_w
-    for i in range(1, len(table)-1, 3):
+    for i in range(1, 13, 3):
         base_col_widths[i] = max_text_w[i] + 16
     
     # 3. 计算画布大小（取最大的列数 * 基础宽度 * colspan）
