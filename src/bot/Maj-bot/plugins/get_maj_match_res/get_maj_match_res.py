@@ -93,8 +93,7 @@ def get_maj_match_res_detail(match_id : str, team_name : str)->str:
         else:
             match_name[i-1] = match_name[i-1]+"1"
             match_name[i] = match_name[i]+"2"
-    # c_round = meta['c_round']
-    c_round = 8
+    c_round = meta['c_round']
 
     # Get round ID
     response = requests.get(url_detail_round+match_id, timeout=5)
@@ -129,7 +128,7 @@ def get_maj_match_res_detail(match_id : str, team_name : str)->str:
         raise Exception(f"查询的比赛代码{match_id}最新轮次: {round['clsmark']}可能尚未开始")
     
     if str(round['rid']) not in data:
-        raise Exception(f"查询的比赛代码{match_id}第{round['clsmark']}轮第{round['t_class']}组可能尚未开始")
+        return "当前轮次{round['clsmark']}可能尚未开始或者尚未有结果"
     matches = data[str(round['rid'])]
 
     # Download Team Logo:
