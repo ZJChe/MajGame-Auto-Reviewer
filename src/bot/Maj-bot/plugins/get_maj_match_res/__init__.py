@@ -24,7 +24,6 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
     match = arg_dict.get("match")
     team = arg_dict.get("team")
     help = arg_dict.get("help")
-    print(help)
 
     group_id = event.get_session_id().split("_")[1].strip()
     if match or team:
@@ -39,7 +38,7 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
         "Options:\n"\
         "\t-m, --match <MATCH_ID>   指定比赛编号(整数)，例如 200\n"\
         "\t-t, --team  <TEAM_NAME>  指定队伍名称(字符串)，例如 “上海交通大学”\n"\
-        "\t-h, --help               显示本帮助信息") 
+        "\t-h, --help  显示本帮助信息") 
     else:
         try:
             if not os.path.exists('config.json'):
