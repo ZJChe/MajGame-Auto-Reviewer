@@ -51,8 +51,14 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
             match_id = cfg[group_id]["match_id"]
             team_name = cfg[group_id]["team_name"]
 
-            res1 = get_maj_match_res_detail(match_id=match_id, team_name=team_name)
-            res2 = get_maj_match_res(match_id=match_id, team_name=team_name)
+            try:
+                res1 = get_maj_match_res_detail(match_id=match_id, team_name=team_name)
+            except Exception as e:
+                res1 = str(e)
+            try:
+                res2 = get_maj_match_res(match_id=match_id, team_name=team_name)
+            except Exception as e:
+                res2 = str(e)
         except Exception as e:
             await mres.finish(f"{e}")
-        await mres.finish(Message(f'{res1}{res2}'))
+        await mres.finish(Message(f'{res1}\n{res2}'))

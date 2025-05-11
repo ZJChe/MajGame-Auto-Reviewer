@@ -128,7 +128,7 @@ def get_maj_match_res_detail(match_id : str, team_name : str)->str:
         raise Exception(f"查询的比赛代码{match_id}最新轮次: {round['clsmark']}可能尚未开始")
     
     if str(round['rid']) not in data:
-        return "当前轮次{round['clsmark']}可能尚未开始或者尚未有结果"
+        raise Exception(f"当前轮次{round['clsmark']}可能尚未开始或者尚未有结果")
     matches = data[str(round['rid'])]
 
     # Download Team Logo:
