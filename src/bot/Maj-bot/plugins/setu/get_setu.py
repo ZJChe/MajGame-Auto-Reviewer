@@ -3,25 +3,49 @@ import uuid
 import os
 import aiohttp
 import asyncio
+from PIL import Image
+
 
 async def download_image_to_unique_file(url: str) -> str:
     """
-    下载图片并保存为唯一文件名，返回保存路径
+    下载图片并保存为唯一文件名（含压缩），返回保存路径
     """
     unique_id = uuid.uuid4().hex
-    ext = os.path.splitext(url)[1]
-    save_path = f"/tmp/setu_{unique_id}{ext if ext else '.jpg'}"
+    ext = os.path.splitext(url)[1].lower()
+    raw_path = f"/tmp/setu_raw_{unique_id}{ext if ext else '.jpg'}"
+    compressed_path = f"/tmp/setu_{unique_id}.jpg"  # 最终返回压缩后的 JPG
 
     try:
+        # 下载原始图片
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
                     raise Exception(f"下载失败，状态码: {resp.status}")
-                with open(save_path, "wb") as f:
+                with open(raw_path, "wb") as f:
                     f.write(await resp.read())
-        return save_path
+
+        # 压缩图片
+        with Image.open(raw_path) as img:
+            if img.mode != "RGB":
+                img = img.convert("RGB")  # 转换为可保存 JPG 的模式
+
+            max_width = 2000
+            if img.width > max_width:
+                ratio = max_width / img.width
+                new_size = (max_width, int(img.height * ratio))
+                img = img.resize(new_size, Image.ANTIALIAS)
+
+            img.save(compressed_path, quality=85)
+
+        os.remove(raw_path)  # 删除原始大图
+        return compressed_path
+
     except Exception as e:
-        print(f"下载失败: {e}")
+        print(f"下载或压缩失败: {e}")
+        # 清理残留文件
+        for path in [raw_path, compressed_path]:
+            if os.path.exists(path):
+                os.remove(path)
         return ""
 
 async def get_setu_lilicon(r18: bool = False, tag: str = None) -> str:
