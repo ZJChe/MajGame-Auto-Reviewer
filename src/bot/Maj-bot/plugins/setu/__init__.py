@@ -5,7 +5,7 @@ from nonebot import on_command, on_message, on_shell_command
 from nonebot.rule import to_me, startswith, shell_command, ArgumentParser, Namespace
 from nonebot.params import CommandArg, ShellCommandArgs
 from nonebot.adapters.onebot.v11 import Event, Bot, Message
-from nonebot.exception import ParserExit
+from nonebot.exception import ParserExit, FinishedException
 from nonebot import logger
 
 from .get_setu import get_setu_lilicon
@@ -45,6 +45,9 @@ async def handle_setu(foo: Annotated[Namespace, ShellCommandArgs()]):
             await setu.finish(Message(f'[CQ:image,file={url}]'))
         else:
             await setu.finish(url)
+    except FinishedException:
+        # 不捕获 FinishedException，让它继续向上抛出
+        raise
     except Exception as e:
         logger.error(f"发生错误: {e}, url: {url}")
         await setu.send("发生错误,请检查API是否正常.")
