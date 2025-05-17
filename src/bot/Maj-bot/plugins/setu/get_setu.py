@@ -4,7 +4,7 @@ import os
 import aiohttp
 import asyncio
 from PIL import Image
-
+from PIL import Resampling  # Pillow 10+ 必须从这里 import
 
 async def download_image_to_unique_file(url: str) -> str:
     """
@@ -13,10 +13,10 @@ async def download_image_to_unique_file(url: str) -> str:
     unique_id = uuid.uuid4().hex
     ext = os.path.splitext(url)[1].lower()
     raw_path = f"/tmp/setu_raw_{unique_id}{ext if ext else '.jpg'}"
-    compressed_path = f"/tmp/setu_{unique_id}.jpg"  # 最终返回压缩后的 JPG
+    compressed_path = f"/tmp/setu_{unique_id}.jpg"
 
     try:
-        # 下载原始图片
+        # 下载原图
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
@@ -24,25 +24,24 @@ async def download_image_to_unique_file(url: str) -> str:
                 with open(raw_path, "wb") as f:
                     f.write(await resp.read())
 
-        # 压缩图片
+        # 打开并压缩图像（Pillow 10+）
         with Image.open(raw_path) as img:
             if img.mode != "RGB":
-                img = img.convert("RGB")  # 转换为可保存 JPG 的模式
+                img = img.convert("RGB")
 
             max_width = 2000
             if img.width > max_width:
                 ratio = max_width / img.width
                 new_size = (max_width, int(img.height * ratio))
-                img = img.resize(new_size, Image.ANTIALIAS)
+                img = img.resize(new_size, Resampling.LANCZOS)
 
             img.save(compressed_path, quality=85)
 
-        os.remove(raw_path)  # 删除原始大图
+        os.remove(raw_path)
         return compressed_path
 
     except Exception as e:
         print(f"下载或压缩失败: {e}")
-        # 清理残留文件
         for path in [raw_path, compressed_path]:
             if os.path.exists(path):
                 os.remove(path)
