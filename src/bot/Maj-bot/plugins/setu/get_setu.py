@@ -4,7 +4,6 @@ import os
 import aiohttp
 import asyncio
 from PIL import Image
-from PIL import Resampling  # Pillow 10+ 必须从这里 import
 
 async def download_image_to_unique_file(url: str) -> str:
     """
@@ -33,7 +32,7 @@ async def download_image_to_unique_file(url: str) -> str:
             if img.width > max_width:
                 ratio = max_width / img.width
                 new_size = (max_width, int(img.height * ratio))
-                img = img.resize(new_size, Resampling.LANCZOS)
+                img = img.resize(new_size, Image.Resampling.LANCZOS)
 
             img.save(compressed_path, quality=85)
 
