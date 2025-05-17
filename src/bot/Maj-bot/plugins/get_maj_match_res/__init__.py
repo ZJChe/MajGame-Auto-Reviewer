@@ -8,6 +8,7 @@ from nonebot.params import CommandArg, ShellCommandArgs
 from nonebot.adapters.onebot.v11 import Event, Bot, Message
 
 from .get_maj_match_res import get_maj_match_res, get_maj_match_res_detail, set_cfg
+from .utils import get_table_pic
 
 parser = ArgumentParser(add_help=False)
 parser.add_argument("-m", "--match", default=None)
@@ -52,7 +53,8 @@ async def handle_mres(foo: Annotated[Namespace, ShellCommandArgs()], event: Even
             team_name = cfg[group_id]["team_name"]
 
             try:
-                res1 = get_maj_match_res_detail(match_id=match_id, team_name=team_name)
+                # res1 = get_maj_match_res_detail(match_id=match_id, team_name=team_name)
+                res1 = await get_table_pic(cid=match_id, school=team_name)
             except Exception as e:
                 res1 = str(e)
             try:

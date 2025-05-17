@@ -3,8 +3,8 @@ from nonebot.rule import to_me, startswith
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Event, Bot, Message
 import asyncio
-
 import subprocess
+import os
 
 restart = on_command("restart", priority=10, block=True)
 
@@ -19,6 +19,8 @@ async def handle_function(bot: Bot, event: Event):
 
         await asyncio.sleep(1)
 
-        subprocess.Popen(["/bin/bash", "/home/cyc/MajGame-Auto-Reviewer/src/bot/restart.sh"])
-            
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        script_path = os.path.abspath(os.path.join(current_dir, "..", "..", "..", "..", "bot", "restart.sh"))
 
+        subprocess.Popen(["/bin/bash", script_path])
+        

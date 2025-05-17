@@ -1,46 +1,58 @@
-from playwright.sync_api import sync_playwright, TimeoutError
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 import time
 import base64
 from nonebot import logger
+import requests
 
-def get_table_pic(cid, round, school):
+url_detail_meta = "https://cdn.r-mj.com/api/data.php?t=admin&cid="
+
+def get_round(cid):
     """
-    获取指定学校的比赛结果截图
-    :param cid: 比赛ID
-    :param round: 轮次
-    :param school: 学校名称
-    :return: base64 编码的图片字符串，或 None（失败）
+    获取比赛轮次（同步操作）
     """
+    response = requests.get(url_detail_meta + cid, timeout=5)
+    if response.status_code != 200:
+        raise Exception(f"查询的比赛代码 {cid} 可能不存在")
+    meta = response.json()
+    return meta['c_round']
+
+async def get_table_pic(cid, school):
+    """
+    获取指定学校的比赛结果截图（异步 Playwright）
+    """
+    url = None
     try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context()
-            page = context.new_page()
-            url = f"https://cdn.r-mj.com/?cid={cid}#!ranking_Log_{round}"
-            page.goto(url, wait_until="networkidle")
+        round = get_round(cid)
+        url = f"https://cdn.r-mj.com/?cid={cid}#!ranking_Log_{round}"
 
-            # 查找包含学校名的表格
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context()
+            page = await context.new_page()
+            await page.goto(url, wait_until="networkidle")
+
             target_table = page.locator(f"table:has-text('{school}')").first
-
-            if not target_table or target_table.count() == 0:
-                print(f"未找到包含学校 “{school}” 的表格。")
+            if await target_table.count() == 0:
+                logger.warning(f"未找到包含学校 {school} 的表格")
                 return None
 
-            image_bytes = target_table.screenshot(type="png")
+            image_bytes = await target_table.screenshot(type="png")
             base64_str = "base64://" + base64.b64encode(image_bytes).decode("utf-8")
-            return base64_str
+            logger.info('成功获取比赛结果截图')
+            return f"[CQ:image,file={base64_str}]"
 
-    except TimeoutError as e:
-        print(f"[超时错误] 页面加载或元素等待超时: {e}")
-        logger.error(f"[大凤林截图模块 超时错误] 页面加载或元素等待超时: {e}, url: {url}")
-        return None
+    except PlaywrightTimeoutError as e:
+        logger.error(f"[大凤林截图模块 超时错误] 页面加载超时: {e}, url: {url}")
     except Exception as e:
-        print(f"[未知错误] 获取截图失败: {e}")
         logger.error(f"[大凤林截图模块 未知错误] 获取截图失败: {e}, url: {url}")
-        return None
+    return None
 
 if __name__ == "__main__":
-    begin = time.time()
-    print(get_table_pic("200", "8", "上海交通大学"))
-    end = time.time()
-    print("耗时：", end - begin)
+    import asyncio
+    async def main():
+        begin = time.time()
+        result = await get_table_pic("183", "花莳·上海千寻雀庄")
+        print(result)
+        print("耗时：", time.time() - begin)
+
+    asyncio.run(main())
